@@ -45,6 +45,97 @@ public class MainActivity extends AppCompatActivity {
             {"Python", "Java", "C++"}, // Pregunta 9
             {"Un software para almacenar y gestionar grandes cantidades de datos", "Un componente de hardware", "Un lenguaje de programación"} // Pregunta 10
     };
+    private int[] respuestas = {1, 0, 1, 0, 1, 0, 0, 0, 0, 0};
+    private int preguntaActual = 0;
+    private int respuestasCorrectas = 0;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        preguntaTextView = findViewById(R.id.preguntaTextView);
+        resultadosTextView = findViewById(R.id.resultadosTextView);
+        opcionesRadioGroup = findViewById(R.id.opcionesRadioGroup);
+        opcion1RadioButton = findViewById(R.id.opcion1RadioButton);
+        opcion2RadioButton = findViewById(R.id.opcion2RadioButton);
+        opcion3RadioButton = findViewById(R.id.opcion3RadioButton);
+        siguienteButton = findViewById(R.id.siguienteButton);
+        volverIntentarButton = findViewById(R.id.volverIntentarButton);
+        salirButton = findViewById(R.id.salirButton);
+
+        mostrarPregunta();
+        siguienteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                comprobarRespuesta();
+                if (preguntaActual < preguntas.length) {
+                    mostrarPregunta();
+                } else {
+                    mostrarResultados();
+                }
+            }
+        });
+
+        volverIntentarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reiniciarJuego();
+            }
+        });
+
+        salirButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    private void reiniciarJuego() {
+        preguntaActual = 0;
+        respuestasCorrectas = 0;
+        mostrarPregunta();
+        resultadosTextView.setText("");
+        siguienteButton.setVisibility(View.VISIBLE);
+    }
+
+    private void mostrarPregunta() {
+        preguntaTextView.setText(preguntas[preguntaActual]);
+        opcion1RadioButton.setText(opciones[preguntaActual][0]);
+        opcion2RadioButton.setText(opciones[preguntaActual][1]);
+        opcion3RadioButton.setText(opciones[preguntaActual][2]);
+        opcionesRadioGroup.clearCheck();
+        preguntaActual++;
+    }
+
+    private void comprobarRespuesta() {
+        int idSeleccionado = opcionesRadioGroup.getCheckedRadioButtonId();
+        RadioButton radioButtonSeleccionado = findViewById(idSeleccionado);
+        int indiceRespuesta = opcionesRadioGroup.indexOfChild(radioButtonSeleccionado);
+        if (indiceRespuesta == respuestas[preguntaActual - 1]) {
+            respuestasCorrectas++;
+        }
+    }
+
+    private void mostrarResultados() {
+        double promedio = (double) respuestasCorrectas / preguntas.length * 10;
+        String mensaje = "";
+
+        if (promedio >= 1 && promedio <= 3) {
+            mensaje = "Dedicate a otra cosa :)";
+        } else if (promedio >= 4 && promedio <= 5) {
+            mensaje = "Estudia un poco mas :(";
+        } else if (promedio >= 6 && promedio <= 7) {
+            mensaje = "De panzaso :,)";
+        } else if (promedio >= 8 && promedio <= 9) {
+            mensaje = "Bien, pero puedes mejorar aun mas";
+        } else if (promedio == 10) {
+            mensaje = " wow! Eres todo un Niño rata";
+        }
+
+        resultadosTextView.setText("Resultados: " + respuestasCorrectas + " respuestas correctas de 10.\nPromedio: " + promedio + "\nMensaje: " + mensaje);
+        siguienteButton.setVisibility(View.GONE);
+    }
 
 }
